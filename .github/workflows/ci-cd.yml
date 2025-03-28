@@ -9,7 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    
+
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -29,10 +29,14 @@ jobs:
       run: |
         sed -i 's/tag: .*/tag: "${{ github.run_id }}"/' wisecow-chart/values.yaml
 
-    - name: Commit and push changes
+    - name: Git Login
       run: |
         git config --global user.email "pavansingh3000@gmail.com"
         git config --global user.name "pavan-3000"
+        git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/pavan-3000/Containerisation-and-Deployment-of-Wisecow-Application-on-Kubernetes-.git
+
+    - name: Commit and push changes
+      run: |
         git add wisecow-chart/values.yaml
         git commit -m "Updated Helm chart tag to ${{ github.run_id }}"
-        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/pavan-3000/Containerisation-and-Deployment-of-Wisecow-Application-on-Kubernetes-.git HEAD:main
+        git push origin HEAD:main
