@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wisecow.fullname" . }}
+  labels:
+    app: {{ include "wisecow.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "wisecow.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "wisecow.name" . }}
+    spec:
+      containers:
+        - name: wisecow
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 4499
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+

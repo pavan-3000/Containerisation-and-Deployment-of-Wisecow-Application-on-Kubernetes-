@@ -1,0 +1,16 @@
+replicaCount: 3
+
+image:
+  repository: pav30/wisecow
+  tag: latest
+
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  enabled: true
+  host: wisecow.example.com
+  secretName: wisecow-tls  # Make sure this matches your TLS secret name
+
+resources: {}
