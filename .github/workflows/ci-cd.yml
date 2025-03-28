@@ -38,5 +38,5 @@ jobs:
     - name: Commit and push changes
       run: |
         git add wisecow-chart/values.yaml
-        git commit -m "Updated Helm chart tag to ${{ github.run_id }}"
+        git commit -m "Updated Helm cchart tag to ${{ github.run_id }}"
         git push 
