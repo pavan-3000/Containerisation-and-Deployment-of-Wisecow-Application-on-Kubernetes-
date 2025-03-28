@@ -35,4 +35,4 @@ jobs:
         git config --global user.name "pavan-3000"
         git add wisecow-chart/values.yaml
         git commit -m "Updated Helm chart tag to ${{ github.run_id }}"
-         git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/pavan-3000/Containerisation-and-Deployment-of-Wisecow-Application-on-Kubernetes-.git HEAD:main
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/pavan-3000/Containerisation-and-Deployment-of-Wisecow-Application-on-Kubernetes-.git HEAD:main
