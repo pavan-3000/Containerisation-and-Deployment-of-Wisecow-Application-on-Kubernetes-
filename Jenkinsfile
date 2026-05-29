@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 catchError {
-                    sh 'python3 -m pip install -r requirements.txt'
+                    sh 'pip install -r requirements.txt' // Changed python3 -m pip to pip
                     sh 'python3 -m pytest'
                 }
             }
