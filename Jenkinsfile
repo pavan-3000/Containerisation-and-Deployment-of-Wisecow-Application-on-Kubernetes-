@@ -13,12 +13,6 @@ pipeline {
             }
         }
 
-        stage('Setup Tools') {
-            steps {
-                // This stage must be removed.
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
