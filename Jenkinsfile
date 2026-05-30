@@ -94,9 +94,9 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'devpilot-registry-1780037367004', usernameVariable: 'REG_USER', passwordVariable: 'REG_PASS')]) {
                             sh '''
                                 echo $REG_PASS | docker login -u $REG_USER --password-stdin
-                                docker tag $DOCKER_IMAGE:$DOCKER_TAG pav30/:$DOCKER_TAG
-                                docker push pav30/:$DOCKER_TAG
-                                docker push pav30/:latest
+                                docker tag $DOCKER_IMAGE:$DOCKER_TAG Ov23liqCvSNXlQEyGd2K/:$DOCKER_TAG
+                                docker push Ov23liqCvSNXlQEyGd2K/:$DOCKER_TAG
+                                docker push Ov23liqCvSNXlQEyGd2K/:latest
                             '''
                         }
                     }
