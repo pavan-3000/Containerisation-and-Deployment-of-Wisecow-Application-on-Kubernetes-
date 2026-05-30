@@ -95,9 +95,9 @@ pipeline {
                             sh '''
                                 BRANCH_TAG=$(echo ${GIT_BRANCH:-${BRANCH_NAME:-main}} | sed 's|origin/||' | tr '/' '-' | tr '[:upper:]' '[:lower:]')
                                 echo $REG_PASS | docker login -u $REG_USER --password-stdin
-                                docker tag $DOCKER_IMAGE:$DOCKER_TAG Ov23liqCvSNXlQEyGd2K/containerisation-and-deployment-of-wisecow-application-on-kubernetes-:$DOCKER_TAG-$BRANCH_TAG
-                                docker push Ov23liqCvSNXlQEyGd2K/containerisation-and-deployment-of-wisecow-application-on-kubernetes-:$DOCKER_TAG-$BRANCH_TAG
-                                docker push Ov23liqCvSNXlQEyGd2K/containerisation-and-deployment-of-wisecow-application-on-kubernetes-:latest
+                                docker tag $DOCKER_IMAGE:$DOCKER_TAG pav30/containerisation-and-deployment-of-wisecow-application-on-kubernetes-:$DOCKER_TAG-$BRANCH_TAG
+                                docker push pav30/containerisation-and-deployment-of-wisecow-application-on-kubernetes-:$DOCKER_TAG-$BRANCH_TAG
+                                docker push pav30/containerisation-and-deployment-of-wisecow-application-on-kubernetes-:latest
                             '''
                         }
                     }
