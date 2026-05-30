@@ -13,6 +13,21 @@ pipeline {
             }
         }
 
+        stage('Setup Tools') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh '''
+                        TOOLS_DIR="$HOME/devpilot-tools"
+                        mkdir -p "$TOOLS_DIR/bin"
+
+                        if ! which trivy 2>/dev/null && [ ! -x "$TOOLS_DIR/bin/trivy" ]; then
+                            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b "$TOOLS_DIR/bin" 2>/dev/null || true
+                        fi
+                    '''
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
@@ -57,18 +72,37 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     script {
-                        def trivyOk = sh(script: 'which trivy 2>/dev/null', returnStatus: true) == 0
-                        if (trivyOk) {
-                            sh "trivy image --exit-code 0 --severity HIGH,CRITICAL --format table ${DOCKER_IMAGE}:${DOCKER_TAG} | tee trivy-report.txt"
-                            archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
-                        } else {
-                            echo 'Trivy not available — skipping scan'
+                        withEnv(["PATH+DEVPILOT=${env.HOME}/devpilot-tools/bin"]) {
+                            def trivyOk = sh(script: 'which trivy 2>/dev/null', returnStatus: true) == 0
+                            if (trivyOk) {
+                                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL --format table ${DOCKER_IMAGE}:${DOCKER_TAG} | tee trivy-report.txt"
+                                archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+                            } else {
+                                echo 'Trivy not available — skipping scan'
+                            }
                         }
                     }
                 }
             }
         }
 
+        stage('Push to Registry') {
+            when { expression { return fileExists('Dockerfile') } }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'devpilot-registry-1780113915287', usernameVariable: 'REG_USER', passwordVariable: 'REG_PASS')]) {
+                            sh '''
+                                echo $REG_PASS | docker login -u $REG_USER --password-stdin
+                                docker tag $DOCKER_IMAGE:$DOCKER_TAG pav30/:$DOCKER_TAG
+                                docker push pav30/:$DOCKER_TAG
+                                docker push pav30/:latest
+                            '''
+                        }
+                    }
+                }
+            }
+        }
     }
 
     post {
