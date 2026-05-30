@@ -3,7 +3,7 @@ FROM ubuntu:latest
 # Set environment variables
 ENV SRVPORT=4499
 ENV PATH="/usr/games:${PATH}"
-vnevoirjvfvijrpe
+
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     fortune-mod cowsay netcat-openbsd \
@@ -20,4 +20,3 @@ EXPOSE 4499
 
 # Run the script
 CMD ["/wisecow.sh"]
-
