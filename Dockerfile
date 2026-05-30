@@ -1,5 +1,4 @@
 FROM ubuntu:latest
-ifhvofdivoiv
 # Set environment variables
 ENV SRVPORT=4499
 ENV PATH="/usr/games:${PATH}"
