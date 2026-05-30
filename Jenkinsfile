@@ -15,16 +15,7 @@ pipeline {
 
         stage('Setup Tools') {
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh '''
-                        TOOLS_DIR="$HOME/devpilot-tools"
-                        mkdir -p "$TOOLS_DIR/bin"
-
-                        if ! which trivy 2>/dev/null && [ ! -x "$TOOLS_DIR/bin/trivy" ]; then
-                            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b "$TOOLS_DIR/bin" 2>/dev/null || true
-                        fi
-                    '''
-                }
+                // This stage must be removed.
             }
         }
 
@@ -72,19 +63,18 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                     script {
-                        withEnv(["PATH+DEVPILOT=${env.HOME}/devpilot-tools/bin"]) {
-                            def trivyOk = sh(script: 'which trivy 2>/dev/null', returnStatus: true) == 0
-                            if (trivyOk) {
-                                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL --format table ${DOCKER_IMAGE}:${DOCKER_TAG} | tee trivy-report.txt"
-                                archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
-                            } else {
-                                echo 'Trivy not available — skipping scan'
-                            }
+                        def trivyOk = sh(script: 'which trivy 2>/dev/null', returnStatus: true) == 0
+                        if (trivyOk) {
+                            sh "trivy image --exit-code 0 --severity HIGH,CRITICAL --format table ${DOCKER_IMAGE}:${DOCKER_TAG} | tee trivy-report.txt"
+                            archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+                        } else {
+                            echo 'Trivy not available — skipping scan'
                         }
                     }
                 }
             }
         }
+
     }
 
     post {
